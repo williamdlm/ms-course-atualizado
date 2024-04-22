@@ -3,3 +3,5 @@ server:
 spring:
   application:
     name: hr-payroll
+hr-worker:
+  host: http://localhost:8001/workers
