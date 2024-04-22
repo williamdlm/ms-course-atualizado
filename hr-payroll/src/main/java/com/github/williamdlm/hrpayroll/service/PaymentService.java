@@ -1,12 +1,11 @@
 package com.github.williamdlm.hrpayroll.service;
 
+import com.github.williamdlm.hrpayroll.feignclient.WorkerFeignClient;
 import com.github.williamdlm.hrpayroll.model.Payment;
 import com.github.williamdlm.hrpayroll.model.Worker;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,15 +15,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class PaymentService {
 
-    private final RestTemplate restTemplate;
+    private final WorkerFeignClient workerFeignClient;
 
-    @Value("${hr-worker.host}")
-    private String workerHost;
 
-    public Payment getPayment(long workerId,int days){
-        Map<String,String> uriVariables = new HashMap<>();
-        uriVariables.put("id",""+workerId);
-        Worker worker = restTemplate.getForObject(workerHost+"/{id}", Worker.class, uriVariables);
+    public Payment getPayment(long workerId, int days) {
+        Worker worker = workerFeignClient.findById(workerId).getBody();
         return new Payment(worker.getName(), worker.getDailyIncome(), days);
 
     }
