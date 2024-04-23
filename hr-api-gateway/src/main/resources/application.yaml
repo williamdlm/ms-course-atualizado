@@ -1,0 +1,46 @@
+server:
+  port: 8765
+spring:
+  application:
+    name: hr-api-gateway
+
+  cloud:
+    gateway:
+      routes:
+        - id: hr-worker
+          uri: lb://hr-worker
+          predicates:
+            - Path=/hr-worker/workers/**
+        - id: hr-payroll
+          uri: lb://hr-payroll
+          predicates:
+            - Path=/hr-payroll/payments/**
+
+      discovery:
+        locator:
+          lower-case-service-id: true
+          enabled: true
+  main:
+    web-application-type: reactive
+
+eureka:
+  instance:
+    hostname: localhost
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+
+
+
+
+
+
+
+
+
+
+
+
+#spring.main.allow-circular-references=true
